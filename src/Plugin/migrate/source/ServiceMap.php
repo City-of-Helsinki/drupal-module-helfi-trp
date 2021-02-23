@@ -25,6 +25,11 @@ class ServiceMap extends HttpSourcePluginBase implements ContainerFactoryPluginI
   protected int $ignoredRows = 0;
 
   /**
+   * {@inheritdoc}
+   */
+  protected bool $useRequestCache = FALSE;
+
+  /**
    * The total count.
    *
    * @var int
