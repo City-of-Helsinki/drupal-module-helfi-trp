@@ -110,6 +110,12 @@ final class Unit extends FixtureBase {
           ],
         ],
       ],
+      [
+        'id' => 2,
+        'name_fi' => 'Name fi 2',
+        'name_sv' => 'Name sv 2',
+        'name_en' => 'Name en 2',
+      ],
     ];
   }
 

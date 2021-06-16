@@ -75,9 +75,13 @@ function helfi_tpr_tokens(
   if (!in_array($type, $entity_types) || empty($data[$type])) {
     return [];
   }
-  /** @var \Drupal\helfi_tpr\Entity\TprEntityBase $entity */
-  $entity = $data[$type];
   $replacements = [];
+
+  $language_manager = \Drupal::languageManager();
+  $langcode = $language_manager->getCurrentLanguage()->getId();
+
+  /** @var \Drupal\helfi_tpr\Entity\TprEntityBase $entity */
+  $entity = \Drupal::service('entity.repository')->getTranslationFromContext($data[$type], $langcode);
 
   foreach ($tokens as $name => $original) {
     if ($name === 'label') {

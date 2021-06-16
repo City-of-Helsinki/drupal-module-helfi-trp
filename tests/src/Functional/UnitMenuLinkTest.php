@@ -22,6 +22,8 @@ class UnitMenuLinkTest extends MigrationTestBase {
   protected static $modules = [
     'menu_link_content',
     'menu_ui',
+    'config_replace',
+    'pathauto',
   ];
 
   /**
@@ -48,7 +50,7 @@ class UnitMenuLinkTest extends MigrationTestBase {
     $this->privilegedAccount->addRole($role);
     $this->privilegedAccount->save();
 
-    foreach (['fi', 'sv'] as $language) {
+    foreach (['fi', 'sv', 'en'] as $language) {
       $this->drupalGet(Url::fromRoute('entity.tpr_unit.edit_form', ['tpr_unit' => 1]), [
         'query' => ['language' => $language],
       ]);
@@ -74,6 +76,30 @@ class UnitMenuLinkTest extends MigrationTestBase {
         'content_translation[status]' => TRUE,
       ], 'Save');
       $this->assertMenuLink("Menu link $language", $language, TRUE);
+
+      $this->drupalGet(Url::fromRoute('entity.tpr_unit.canonical', ['tpr_unit' => 1]), [
+        'query' => ['language' => $language],
+      ]);
+
+      $this->assertSession()->addressEquals('name-' . $language . '-1');
+
+      $this->drupalGet(Url::fromRoute('entity.tpr_unit.edit_form', ['tpr_unit' => 2]), [
+        'query' => ['language' => $language],
+      ]);
+
+      $menu_link = $this->getSession()->getPage()->find('select[name="menu[menu_parent]"] option:last-child', 'css');
+
+      $this->submitForm([
+        'menu[enabled]' => TRUE,
+        'menu[title]' => "Menu link $language",
+        'menu[menu_parent]' => $menu_link->getValue(),
+      ], 'Save');
+
+      $this->drupalGet(Url::fromRoute('entity.tpr_unit.canonical', ['tpr_unit' => 2]), [
+        'query' => ['language' => $language],
+      ]);
+
+      $this->assertSession()->addressEquals('name-' . $language . '-1');
     }
   }
 
